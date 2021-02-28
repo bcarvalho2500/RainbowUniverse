@@ -12,11 +12,12 @@
     </div>
 
     <div class="page" id="mainMenuPage">
-        <div>
+        <div id="menuOptions" style="display: inline-block">
             <div id="loggedInAsText">Logged in as: </div>
-            <div><button>Create Lobby</button></div>
-            <div><button>Join Lobby</button></div>
-            <div><button>Leaderboards</button></div>
+            <div><button onmousedown="quickPlay()">Quick Play</button></div>
+            <div><button onmousedown="createLobby()">Create Lobby</button></div>
+            <div><button onmousedown="joinLobby()">Join Lobby</button></div>
+            <div><button onmousedown="showLeaderBoard()">Leader Boards</button></div>
         </div>
     </div>
 
@@ -174,6 +175,12 @@
 
     .active {
         display: inline-block;
+    }
+
+    #menu > div > button {
+        width:180px;
+        height:40px;
+        margin:5px;
     }
 
 </style>
