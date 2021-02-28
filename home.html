@@ -1,0 +1,179 @@
+<head>
+    <script>
+        var clientId = undefined;
+        var lobbyId = undefined;
+        var alias = undefined;
+    </script>
+</head>
+
+<body>
+    <div class="page active" id="connectingPage">
+        <div>Connecting...</div>
+    </div>
+
+    <div class="page" id="mainMenuPage">
+        <div>
+            <div id="loggedInAsText">Logged in as: </div>
+            <div><button>Create Lobby</button></div>
+            <div><button>Join Lobby</button></div>
+            <div><button>Leaderboards</button></div>
+        </div>
+    </div>
+
+    <div class="page" id="lobbyPage">
+        Lobby or something
+    </div>
+
+    <div class="page" id="leaderBoardPage">
+        Leader boards
+    </div>
+</body>
+
+
+<script>
+
+    var onShowPage = {
+        "mainMenuPage": function(page){
+            document.getElementById("loggedInAsText").innerHTML = "Logged in as: " + alias;
+        }
+    };
+
+    var onHidePage = {
+
+    };
+
+
+    var showPages = function(pages){
+        for(var i=pages.length-1; i>=0; i--){
+            var pageElement = document.getElementById(pages[i]);
+            var activePages = pageElement.parentElement.getElementsByClassName("active")
+            for(var j=activePages.length-1; j>=0; j--){
+                (onHidePage[activePages[j].id] || function(){})();
+                activePages[j].classList.remove("active");
+            }
+
+            pageElement.classList.add("active");
+            console.log(pages[i]);
+            (onShowPage[pages[i]] || function(){})(pageElement);
+        }
+    }
+
+    const host = "ws://127.0.0.1:9995/";
+    var socket = new WebSocket(host);
+
+    var setAlias = function(alias){
+        socket.send("cl_alias|" + alias);
+    }
+
+    var createLobby = function(){
+        socket.send("lb_create|");
+    }
+
+    var joinLobby = function(lobbyId){
+        socket.send("lb_join|" + lobbyId);
+    }
+
+    var leaveLobby = function(lobbyId){
+        socket.send("lb_leave|");
+    }
+
+    var kickPlayerFromLobby = function(clientId){
+        socket.send("lb_kick|" + clientId);
+    }
+
+    var banPlayerFromLobby = function(clientId){
+        socket.send("lb_ban|" + clientId);
+    }
+
+    socket.onopen = function(){
+        console.log("Connected");
+    }
+
+    socket.onerror = function(e){
+        console.log("Error");
+        console.log(e);
+    }
+
+    socket.onclose = function(e){
+        console.log("Closed");
+        console.log(e);
+    }
+
+    socket.onmessage = function(e){
+        var messageData = e.data.split("|")
+        var type        = messageData[0];
+        var message     = messageData[1];
+        
+        (({
+            "sv_error":function(message){
+                console.log("Server encountered an error: " + message);
+            },
+
+            "cl_init":function(message){
+                var clientInfo = message.split(":")
+                clientId = clientInfo[1];
+                if(alias === undefined){
+                    alias = clientInfo[0];
+                }else{
+                    setAlias(alias);
+                }
+
+                document.cookie = "clientId=" + message;
+                console.log("Client ID =", clientId);
+                showPages(["mainMenuPage"]);
+            },
+
+            "cl_alias":function(message){
+                alias = message;
+                console.log("Alias changed:", alias);
+            },
+
+            "lb_init":function(message){
+                lobbyId = message;
+                console.log("Lobby created");
+                console.log("Lobby ID =", lobbyId);
+            },
+
+            "lb_joined":function(message){
+                var lobbyPlayers = message.split(",");
+                console.log("lobby joined", lobbyPlayers);
+            },
+
+            "lb_kicked":function(message){
+                console.log("You have been kicked from the lobby");
+            },
+
+            "lb_banned":function(message){
+                console.log("You have been banned from the lobby");
+            },
+
+            "lb_promoted":function(message){
+                console.log("You have been promoted to lobby leader");
+            },
+
+            "lb_updated":function(message){
+                console.log("The lobby is being updated");
+            },
+        })[type] || function(){})(message);
+    }
+
+</script>
+
+<style type="text/css">
+    body {
+        margin:0;
+        width:100%;
+        height:100%;
+    }
+
+    .page {
+        display: none;
+        width:100%;
+        height:100%;
+    }
+
+    .active {
+        display: inline-block;
+    }
+
+</style>
