@@ -1,4 +1,10 @@
 <head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+
     <script>
         var clientId = undefined;
         var lobbyId = undefined;
@@ -12,20 +18,42 @@
     </div>
 
     <div class="page" id="mainMenuPage">
-        <div id="menuOptions" style="display: inline-block">
-            <div id="loggedInAsText">Logged in as: </div>
-            <div><button onmousedown="quickPlay()">Quick Play</button></div>
-            <div><button onmousedown="createLobby()">Create Lobby</button></div>
-            <div><button onmousedown="joinLobby()">Join Lobby</button></div>
-            <div><button onmousedown="showLeaderBoard()">Leader Boards</button></div>
+        <div id="titleBar">
+            <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
+            <div style="flex:2; text-align:center"> <h1>Rainbow Universe</h1> </div>
+            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
+                <div></div>
+            </div>
+        </div>
+        <div>
+            <br><br><br><br><br><br><br><br><br><br><!-- temp ;) -->
+            <div id="menuOptions">
+                <div><button onmousedown="quickPlay()" style="background-color: aqua;">Quick Play</button></div>
+                <div><button onmousedown="createLobby()" style="background-color: orange;">Create Lobby</button></div>
+                <div><button onmousedown="joinLobby()" style="background-color: rgb(80, 223, 80);">Join Lobby</button></div>
+                <div><button onmousedown="rankedLobby()" style="background-color: rgb(211, 112, 211);">Ranked</button></div>
+                <div><button onmousedown="showLeaderBoard()" style="background-color: rgb(224, 49, 49);">Leader Boards</button></div>
+            </div>
+        </div>
+
+        <div class="page" id = "joinLobbyPage">
+            
         </div>
     </div>
 
+    
     <div class="page" id="lobbyPage">
         Lobby or something
     </div>
 
     <div class="page" id="leaderBoardPage">
+        <div id="titleBar">
+            <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
+            <div style="flex:2; text-align:center"> <h1>Rainbow Universe</h1> </div>
+            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
+                <div></div>
+            </div>
+        </div>
         Leader boards
     </div>
 </body>
@@ -35,7 +63,7 @@
 
     var onShowPage = {
         "mainMenuPage": function(page){
-            document.getElementById("loggedInAsText").innerHTML = "Logged in as: " + alias;
+            document.getElementById("userAlias").innerHTML = alias;
         }
     };
 
@@ -159,28 +187,3 @@
     }
 
 </script>
-
-<style type="text/css">
-    body {
-        margin:0;
-        width:100%;
-        height:100%;
-    }
-
-    .page {
-        display: none;
-        width:100%;
-        height:100%;
-    }
-
-    .active {
-        display: inline-block;
-    }
-
-    #menuOptions > div > button {
-        width:180px;
-        height:40px;
-        margin:5px;
-    }
-
-</style>

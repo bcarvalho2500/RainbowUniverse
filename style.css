@@ -1,0 +1,43 @@
+body {
+    margin:0;
+    width:100%;
+    height:100%;
+    background-image: url(Images/backdrop.png);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.page {
+    display: none;
+    width:100%;
+    height:100%;
+}
+
+.active {
+    display: inline-block;
+}
+
+#menuOptions {
+    text-align: center;
+}
+
+#menuOptions > div > button {
+    width:220px;
+    height:55px;
+    margin:5px;
+
+    border-radius: 10px;
+    transition-duration: 0.4s;
+}
+
+#menuOptions > div > button:hover{
+    width: 240px;
+}
+
+#titleBar{
+    background-color:#FFFFFF55;
+    display:flex;
+    height:50px;
+    width:100%;
+    flex-direction:row;
+}
