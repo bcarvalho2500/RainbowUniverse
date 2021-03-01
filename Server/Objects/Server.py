@@ -95,7 +95,7 @@ class Server:
     def _onDisconnect(self, client):
         player = self._getPlayerFromClient(client)
         if player is None: return {"success":False, "message":"Player was not connected"}
-
+            
         if not player.inGame:
             self.leaveLobby(player)
 

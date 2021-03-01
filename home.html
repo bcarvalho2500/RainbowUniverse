@@ -8,15 +8,23 @@
     <script>
         var clientId = undefined;
         var lobbyId = undefined;
+        var lobbyPlayers = [];
         var alias = undefined;
     </script>
 </head>
 
 <body>
     <div id="overlays">
-        <div class="overlay" id="joinLobbyOverlay">
+        <div class="overlay" id="joinLobbyOverlay" style="display: block;">
+            <div><h2>Enter Lobby Code:</h2></div>
             <div id = "joinLobby">
-                <textarea name="lobbyCode" id="lobbyCode" maxlength="8"></textarea>
+                <textarea name="lobbyCode" id="lobbyCode" maxlength="8" rows="1" cols="12"></textarea>
+            </div>
+            <br>
+            <span id = "errorMessage"></span>
+            <div id = "joinLobbyOptions" style="float: right;">
+                <button onmousedown="joinLobby(document.getElementById('lobbyCode').value); hideOverlay();" style="background-color: rgb(80, 223, 80);">Join Lobby</button>
+                <button onmousedown="hideOverlay(); document.getElementById('lobbyCode').value=''" style="background-color: rgb(224, 49, 49);">Cancel</button>
             </div>
         </div>
     </div>
@@ -28,7 +36,7 @@
     <div class="page" id="mainMenuPage">
         <div id="titleBar">
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
-            <div style="flex:2; text-align:center"> <h1>Rainbow Universe</h1> </div>
+            <div style="flex:2; text-align:center"> <h1><span>Rainbow Universe</span></h1> </div>
             <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
                 <div></div>
             </div>
@@ -38,9 +46,9 @@
             <div id="menuOptions">
                 <div><button onmousedown="quickPlay()" style="background-color: aqua;">Quick Play</button></div>
                 <div><button onmousedown="createLobby()" style="background-color: orange;">Create Lobby</button></div>
-                <div><button onmousedown="joinLobby()" style="background-color: rgb(80, 223, 80);">Join Lobby</button></div>
+                <div><button onmousedown="showOverlay('joinLobbyOverlay')" style="background-color: rgb(80, 223, 80);">Join Lobby</button></div>
                 <div><button onmousedown="rankedLobby()" style="background-color: rgb(211, 112, 211);">Ranked</button></div>
-                <div><button onmousedown="showLeaderBoard()" style="background-color: rgb(224, 49, 49);">Leader Boards</button></div>
+                <div><button onmousedown="showPage('leaderBoardPage')" style="background-color: rgb(224, 49, 49);">Leader Boards</button></div>
             </div>
         </div>
     </div>
@@ -57,8 +65,13 @@
         
         <div>
             <br><br><br><br><!-- temp ;) -->
-            <div id="menuOptions">
-                
+            <div style="display:inline-block">
+                <div id="lobbyHeader">Lobby:</div>
+                <div id="membersContainer"></div>
+                <div style="display:flex;">
+                    <button class="lobbyButton">Leave Lobby</button>
+                    <button class="lobbyButton">Start Searching</button>
+                </div>
             </div>
         </div>
 
@@ -72,33 +85,54 @@
                 <div></div>
             </div>
         </div>
+        <div style="text-align:center; margin: 10px">
+            <div style="font-size:40pt; margin-top:50px; margin-bottom: 5px; border: 2px solid green; background-color: #87cefa75;"><p >TOP 25 TODAY</p></div>
+            <div style="padding: 10px; border: 2px solid green;"> 
+                <ol>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ol>
+            </div>
+            <div><button onmousedown="showPage('mainMenuPage')" style="background-color: rgb(80, 223, 80); margin-top:10px; border-radius: 10px;">Back to Menu</button></div>
+        </div>
+    </div>
+
+    <div class="page" id="winnerPage">
+        <div id="titleBar">
+            <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
+            <div style="flex:2; text-align:center"><h1>Rainbow Universe</h1></div>
+            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
+                <div></div>
+            </div>
+        </div>
         <div style="text-align:center">
             <br><br><br><br><br><br><br><br><br><br><!-- temp ;) -->
-            <p style="padding: 10px; border: 2px solid green;">TOP 30 TODAY</p>
-            <p style="padding: 10px; border: 2px solid green;">
-            <ol>
-                <li>#1)</li>
-                <li>#2)</li>
-                <li>#3)</li>
-                <li>#4)</li>
-                <li>#5)</li>
-                <li>#6)</li>
-                <li>#7)</li>
-                <li>#8)</li>
-                <li>#9)</li>
-                <li>#10)</li>
-                <li>#21)</li>
-                <li>#22)</li>
-                <li>#23)</li>
-                <li>#24)</li>
-                <li>#25)</li>
-                <li>#26)</li>
-                <li>#27)</li>
-                <li>#28)</li>
-                <li>#29)</li>
-                <li>#30)</li>
-            </ol>
-            </p>
+            <p style="padding: 10px; border: 2px solid black;">Winner: </p>
+            <div><button onmousedown="createLobby()" style="background-color: rgb(112, 112, 202);">Back to Lobby</button></div>
+            <div><button onmousedown="showPage('mainMenuPage')" style="background-color: rgb(112, 112, 202);">Back to Menu</button></div>
         </div>
     </div>
 </body>
@@ -109,6 +143,10 @@
     var onShowPage = {
         "mainMenuPage": function(page){
             document.getElementById("userAlias").innerHTML = alias;
+        },
+
+        "lobbyPage": function(page){
+            document.getElementById().innerHTML = "Lobby:" + lobbyId;
         }
     };
 
@@ -129,7 +167,7 @@
 
 
     var showOverlay = function(overlayId){
-        document.getElementById("overlays").style.display = "inline-block";
+        document.getElementById("overlays").style.display = "flex";
         document.getElementById(overlayId).classList.add("active");
     }
 
@@ -142,6 +180,32 @@
         }
     }
 
+
+    function addPlayerToLobby(player, controlButtons){
+        playerData = player.split(":")
+
+        var memberContainer = document.createElement("div");
+        memberContainer.className = "lobbyMember";
+        memberContainer.setAttribute("clientId", playerData[1]);
+        memberContainer.innerHTML = playerData[0];
+
+        if(controlButtons){
+            var banButton = document.createElement("button");
+            banButton.className = "lobbyMemberButton";
+            banButton.onmousedown = function(){ banPlayer(playerData[1]); }
+            banButton.innerHTML = "B";
+            memberContainer.appendChild(banButton);
+
+            var kickButton = document.createElement("button");
+            kickButton.className = "lobbyMemberButton";
+            kickButton.onmousedown = function(){ kickPlayer(playerData[1]); }
+            kickButton.innerHTML = "K";
+            memberContainer.appendChild(kickButton);
+        }
+
+        var membersContainer = document.getElementById("membersContainer");
+        membersContainer.appendChild(memberContainer);
+    }
 
 
 
@@ -219,11 +283,18 @@
                 lobbyId = message;
                 console.log("Lobby created");
                 console.log("Lobby ID =", lobbyId);
+                lobbyPlayers = ["*"+alias+":"+clientId];
+                showPage("lobbyPage");
+                addPlayerToLobby(lobbyPlayers[0], true);
             },
 
             "lb_joined":function(message){
-                var lobbyPlayers = message.split(",");
-                console.log("lobby joined", lobbyPlayers);
+                lobbyPlayers = message.split(",");
+                var isLobbyLeader = lobbyPlayers[0] == "*"+alias+":"+clientId;
+                for(var i=lobbyPlayers.length-1; i>=0; i--){
+                    addPlayerToLobby(lobbyPlayers[i], isLobbyLeader);
+                }
+                showPage("lobbyPage");
             },
 
             "lb_kicked":function(message){

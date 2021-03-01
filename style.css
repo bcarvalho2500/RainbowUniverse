@@ -15,10 +15,16 @@ body {
     left:0;
     top:0;
     background-color: #00000033;
+
+    
+    align-items: center;
+    justify-content: center;
 }
 
 .overlay {
     display: none;
+    align-items: center;
+    justify-content: center;
 }
 
 .page {
@@ -49,14 +55,75 @@ body {
 }
 
 #titleBar{
-    background-color:#FFFFFF55;
+    background-color:#FFFFFF;
     display:flex;
     height:50px;
     width:100%;
     flex-direction:row;
 }
 
+#titleBar > div > h1 > span{
+    /*
+    background: -webkit-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
+    background: -o-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
+    background: -moz-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
+    background: linear-gradient(to left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
+    */
+    background: -webkit-linear-gradient(right,red, yellow, green, cyan, blue, magenta);
+    background: -o-linear-gradient(right,red, yellow, green, cyan, blue, magenta);
+    background: -moz-linear-gradient(right,red, yellow, green, cyan, blue, magenta);
+    background: linear-gradient(to right,red, yellow, green, cyan, blue, magenta);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 #joinLobbyOverlay{
+    padding: 10px;
+    background-color: rgb(172, 172, 172);
+    border: 2px solid black;
+    border-radius: 10px;
+}
+#joinLobbyOverlay > #joinLobby > textarea[name = "lobbyCode"]{
+    resize: none;
     text-align: center;
-    position: absolute;
+    font-size: 40pt;
+    overflow: unset;
+}
+
+#joinLobbyOverlay > #joinLobbyOptions > button{
+    
+    border-radius: 10px;
+}
+
+
+#lobbyHeader {
+    font-size: 40px;
+    text-align: center;
+}
+
+.lobbyMember {
+    height:70px;
+    width:700px;
+    background-color: #AAAAAA;
+    margin:5px;
+    padding:5px;
+    font-size: 50px;
+}
+
+.lobbyMemberButton {
+    height:70px;
+    width:70px;
+    float:right;
+    margin-left:5px;
+}
+
+.lobbyMemberButton : hover {
+    cursor: pointer;
+}
+
+.lobbyButton {
+    flex:1;
+    margin:5px;
+    height:50px;
 }
