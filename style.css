@@ -62,7 +62,7 @@ body {
     flex-direction:row;
 }
 
-#titleBar > div > h1 > span{
+.gradientTitle{
     /*
     background: -webkit-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
     background: -o-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
@@ -105,10 +105,12 @@ body {
 .lobbyMember {
     height:70px;
     width:700px;
-    background-color: #AAAAAA;
+    background-color: #fa3434;
     margin:5px;
-    padding:5px;
     font-size: 50px;
+    padding: 0 5px;
+    border-radius: 10px;
+    line-height: 70px;
 }
 
 .lobbyMemberButton {
@@ -118,11 +120,19 @@ body {
     margin-left:5px;
 }
 
-.lobbyMemberButton : hover {
+.lobbyMemberButton:hover {
     cursor: pointer;
 }
 
-.lobbyButton {
+#lobbyInfo{
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+}
+
+#lobbyInfo button{
+    border-radius: 10px;
     flex:1;
     margin:5px;
     height:50px;

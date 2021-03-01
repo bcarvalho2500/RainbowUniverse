@@ -24,6 +24,12 @@ class Server:
         self._connections = {}
         self._players = {}
 
+        with open("Animals.txt", "r") as f:
+            self._animals = [line[:-1] for line in f.readlines()]
+
+        with open("Adjectives.txt", "r") as f:
+            self._adjectives = [line[:-1] for line in f.readlines()]
+
     # returns the player object associated with a specific client id
     def _getPlayerFromClientId(self, clientId):
         return self._players.get(clientId, None)
@@ -82,13 +88,9 @@ class Server:
         player = Player(client)
         self._players[client["id"]] = player
 
-        with open("Animals.txt") as f:
-            animal = random.choice(f.readlines())[:-1]
-        with open("Adjectives.txt") as f:
-            adjective = random.choice(f.readlines())[:-1]
-        alias = "%s %s" % (adjective, animal)
+        player.alias = "%s %s" % (random.choice(self._adjectives), random.choice(self._animals))
 
-        self._sendPlayerMessage(player, "cl_init|%s:%s" % (alias, client["id"]))
+        self._sendPlayerMessage(player, "cl_init|%s:%s" % (player.alias, client["id"]))
 
         return {"success":True}
 
@@ -114,8 +116,7 @@ class Server:
         player.alias = alias
 
         if player.inLobby is not None:
-            for lobbyPlayer in player.inLobby:
-                self._sendPlayerMessage(lobbyPlayer, "lb_updated|")
+            self.updateLobby(player.inLobby)
 
         return {"success":True}
 
@@ -144,9 +145,8 @@ class Server:
         response = lobby.addPlayer(player)
         if not response["success"]: return response
 
-        lobbyPlayers = ",".join(["%s:%s"%(player.alias, player.getClientId()) for player in lobby.players])
-
-        self._sendPlayerMessage(player, "lb_joined|%s" % lobbyPlayers)
+        self._sendPlayerMessage(player, "lb_joined|")
+        self.updateLobby(lobby)
         return {"success":True}
 
     # a player is trying to leave the lobby they are in
@@ -164,8 +164,7 @@ class Server:
             # if it is not emtpy, then a new player was promoted to leader
             # the lobby should be updated for all connected players
             else:
-                for lobbyPlayer in lobby:
-                    self._sendPlayerMessage(lobbyPlayer, "lb_updated|")
+                self.updateLobby(lobby)
 
         return {"success":True}
         
@@ -201,6 +200,11 @@ class Server:
             self._sendPlayerMessage(lobbyPlayer, "lb_updated|")
 
         return {"success":True}
+
+    def updateLobby(self, lobby):
+        lobbyPlayers = ",".join(["%s:%s"%(player.alias, player.getClientId()) for player in lobby.players])
+        for lobbyPlayer in lobby:
+            self._sendPlayerMessage(lobbyPlayer, "lb_updated|%s" % lobbyPlayers)
 
     # print info about players currently connected
     def listPlayers(self):

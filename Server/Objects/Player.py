@@ -5,7 +5,6 @@ class Player:
         self.inGame  = False
         self.inLobby = None
 
-
         self.pos = {"x":0, "y":0}
         self.vel = {"x":0, "y":0}
 

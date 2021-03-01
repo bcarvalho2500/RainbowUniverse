@@ -14,30 +14,40 @@
 </head>
 
 <body>
+<!-- Container for Overlays-->
     <div id="overlays">
+        <!-- Overlay for Join Lobby-->
         <div class="overlay" id="joinLobbyOverlay" style="display: block;">
             <div><h2>Enter Lobby Code:</h2></div>
             <div id = "joinLobby">
                 <textarea name="lobbyCode" id="lobbyCode" maxlength="8" rows="1" cols="12"></textarea>
             </div>
             <br>
-            <span id = "errorMessage"></span>
+            <!--Buttons for joining lobby or canceling-->
             <div id = "joinLobbyOptions" style="float: right;">
-                <button onmousedown="joinLobby(document.getElementById('lobbyCode').value); hideOverlay();" style="background-color: rgb(80, 223, 80);">Join Lobby</button>
+                <button onmousedown="joinLobby(document.getElementById('lobbyCode').value); hideOverlay();"  style="background-color: rgb(80, 223, 80);">Join Lobby</button>
                 <button onmousedown="hideOverlay(); document.getElementById('lobbyCode').value=''" style="background-color: rgb(224, 49, 49);">Cancel</button>
             </div>
         </div>
     </div>
+<!-- OVERLAYS END -->
 
+
+
+ <!-- CONNECTIONS PAGE -->
     <div class="page active" id="connectingPage">
         <div>Connecting...</div>
     </div>
+<!-- CONNECTION SPAGE END -->
 
+
+
+<!-- MAIN MENU PAGE -->
     <div class="page" id="mainMenuPage">
         <div id="titleBar">
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
-            <div style="flex:2; text-align:center"> <h1><span>Rainbow Universe</span></h1> </div>
-            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
+            <div style="flex:2; text-align:center"> <h1><span class = "gradientTitle">Rainbow Universe</span></h1> </div>
+            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias1"></button>
                 <div></div>
             </div>
         </div>
@@ -52,36 +62,42 @@
             </div>
         </div>
     </div>
-
+<!-- MAIN MENU PAGE END -->
     
+
+
+<!-- LOBBY PAGE -->
     <div class="page" id="lobbyPage">
         <div id="titleBar">
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
-            <div style="flex:2; text-align:center"> <h1>Rainbow Universe</h1> </div>
-            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
+            <div style="flex:2; text-align:center"> <h1><span class = "gradientTitle">Rainbow Universe</span></h1> </div>
+            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias2"></button>
                 <div></div>
             </div>
         </div>
         
-        <div>
+        <div id="lobbyInfo">
             <br><br><br><br><!-- temp ;) -->
             <div style="display:inline-block">
                 <div id="lobbyHeader">Lobby:</div>
                 <div id="membersContainer"></div>
                 <div style="display:flex;">
-                    <button class="lobbyButton">Leave Lobby</button>
-                    <button class="lobbyButton">Start Searching</button>
+                    <button onmousedown="leaveLobby()" style="background-color: aqua;">Leave Lobby</button>
+                    <button style="background-color: orange;">Start Searching</button>
                 </div>
             </div>
         </div>
-
     </div>
+<!-- LOBBY PAGE END -->
 
+
+
+<!-- LEADERBOARD PAGE -->
     <div class="page" id="leaderBoardPage">
         <div id="titleBar">
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
-            <div style="flex:2; text-align:center"> <h1>Rainbow Universe</h1> </div>
-            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
+            <div style="flex:2; text-align:center"> <h1><span class = "gradientTitle">Rainbow Universe</span></h1> </div>
+            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias3"></button>
                 <div></div>
             </div>
         </div>
@@ -89,42 +105,19 @@
             <div style="font-size:40pt; margin-top:50px; margin-bottom: 5px; border: 2px solid green; background-color: #87cefa75;"><p >TOP 25 TODAY</p></div>
             <div style="padding: 10px; border: 2px solid green;"> 
                 <ol>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
+                    <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
                 </ol>
             </div>
             <div><button onmousedown="showPage('mainMenuPage')" style="background-color: rgb(80, 223, 80); margin-top:10px; border-radius: 10px;">Back to Menu</button></div>
         </div>
     </div>
+<!-- LEADERBOARD PAGE END -->
 
     <div class="page" id="winnerPage">
         <div id="titleBar">
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
-            <div style="flex:2; text-align:center"><h1>Rainbow Universe</h1></div>
-            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias"></button>
+            <div style="flex:2; text-align:center"> <h1><span class = "gradientTitle">Rainbow Universe</span></h1> </div>
+            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias4"></button>
                 <div></div>
             </div>
         </div>
@@ -142,11 +135,16 @@
 
     var onShowPage = {
         "mainMenuPage": function(page){
-            document.getElementById("userAlias").innerHTML = alias;
+            document.getElementById("userAlias1").innerHTML = alias;
         },
 
         "lobbyPage": function(page){
-            document.getElementById().innerHTML = "Lobby:" + lobbyId;
+            document.getElementById("lobbyHeader").innerHTML = "Lobby: " + lobbyId;
+            document.getElementById("userAlias2").innerHTML = alias;
+        },
+
+        "leaderBoardPage": function(page){
+            document.getElementById("userAlias3").innerHTML = alias;
         }
     };
 
@@ -158,11 +156,12 @@
         var pageElement = document.getElementById(page);
         var activePages = pageElement.parentElement.getElementsByClassName("active")
         for(var j=activePages.length-1; j>=0; j--){
-            (onHidePage[activePages[j].id] || function(){})();
+            (onHidePage[activePages[j].id] || function(){})(activePages[j]);
             activePages[j].classList.remove("active");
         }
 
         pageElement.classList.add("active");
+        (onShowPage[page] || function(){})(pageElement);
     }
 
 
@@ -220,12 +219,16 @@
         socket.send("lb_create|");
     }
 
-    var joinLobby = function(lobbyId){
-        socket.send("lb_join|" + lobbyId);
+    var joinLobby = function(localLobbyId){
+        lobbyId = localLobbyId;
+        socket.send("lb_join|" + localLobbyId);
     }
 
     var leaveLobby = function(lobbyId){
         socket.send("lb_leave|");
+        lobbyPlayers = [];
+        lobbyId = undefined;
+        showPage("mainMenuPage");
     }
 
     var kickPlayerFromLobby = function(clientId){
@@ -281,19 +284,13 @@
 
             "lb_init":function(message){
                 lobbyId = message;
-                console.log("Lobby created");
-                console.log("Lobby ID =", lobbyId);
+                console.log(lobbyId);
                 lobbyPlayers = ["*"+alias+":"+clientId];
                 showPage("lobbyPage");
-                addPlayerToLobby(lobbyPlayers[0], true);
             },
 
             "lb_joined":function(message){
-                lobbyPlayers = message.split(",");
-                var isLobbyLeader = lobbyPlayers[0] == "*"+alias+":"+clientId;
-                for(var i=lobbyPlayers.length-1; i>=0; i--){
-                    addPlayerToLobby(lobbyPlayers[i], isLobbyLeader);
-                }
+                console.log(message)
                 showPage("lobbyPage");
             },
 
@@ -307,10 +304,24 @@
 
             "lb_promoted":function(message){
                 console.log("You have been promoted to lobby leader");
+                
+                console.log("Lobby created");
+                console.log("Lobby ID =", lobbyId);
+                lobbyPlayers = ["*"+alias+":"+clientId];
+                showPage("lobbyPage");
+                addPlayerToLobby(lobbyPlayers[0], true);
             },
 
             "lb_updated":function(message){
                 console.log("The lobby is being updated");
+
+                document.getElementById("membersContainer").innerHTML = "";
+
+                lobbyPlayers = message.split(",");
+                var isLobbyLeader = lobbyPlayers[0] == "*"+alias+":"+clientId;
+                for(var i=lobbyPlayers.length-1; i>=0; i--){
+                    addPlayerToLobby(lobbyPlayers[i], isLobbyLeader);
+                }
             },
         })[type] || function(){})(message);
     }
