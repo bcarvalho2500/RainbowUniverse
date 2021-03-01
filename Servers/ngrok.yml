@@ -1,0 +1,8 @@
+authtoken: 1hyibeO8d0p8varETk0EZxA72pR_4MUivR3NoVBghop4hFr3X
+tunnels:
+  httpServer:
+    addr: 80
+    proto: http
+  socketServer:
+    addr: 9995
+    proto: http
