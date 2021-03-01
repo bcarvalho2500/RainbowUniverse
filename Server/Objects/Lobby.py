@@ -24,19 +24,13 @@ class Lobby:
 
         return {"success":True}
 
+    def removePlayer(self, player):
+        self.players.remove(player)
+        player.inLobby = None
+
     def banPlayer(self, player):
         self.bannedPlayers.append(player)
         return {"success":True}
-
-    # removes a player from this lobby
-    def removePlayer(self, player):
-        for i in range(len(self.players)):
-            if self.players[i] == player:
-                self.players[i].inLobby = None
-                self.players.pop(i)
-                return {"success":True}
-
-        return {"success":False, "message":"Player is not in lobby"}
 
     # kicks a player from the lobby
     def kickPlayer(self, requestingPlayer, player):

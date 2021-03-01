@@ -21,7 +21,6 @@ class Server:
         self._lobbies = {}
         self._games = {}
 
-        self._connections = {}
         self._players = {}
 
         with open("Animals.txt", "r") as f:
@@ -96,14 +95,17 @@ class Server:
 
     def _onDisconnect(self, client):
         player = self._getPlayerFromClient(client)
+
         if player is None: return {"success":False, "message":"Player was not connected"}
             
+        # remove them from the lobby?
         if not player.inGame:
             self.leaveLobby(player)
 
-        # remove them from the lobby?
-
         # allow them to reconnect to a game?
+
+
+        del self._players[player.getClientId()]
         
         return {"success":True}
 
@@ -132,6 +134,7 @@ class Server:
 
         # tell the player that the lobby was created and give them the ID of the lobby
         self._sendPlayerMessage(player, "lb_init|%s" % lobbyId)
+        self.updateLobby(self._lobbies[lobbyId])
 
         return {"success":True}
 
@@ -180,8 +183,7 @@ class Server:
         self._sendPlayerMessage(otherPlayer, "lb_kicked|") 
 
         # tell all other clients in the lobby to update the lobby
-        for lobbyPlayer in player.inLobby:
-            self._sendPlayerMessage(lobbyPlayer, "lb_updated|")
+        self.updateLobby(player.inLobby)
 
         return {"success":True}
 
@@ -196,8 +198,7 @@ class Server:
         self._sendPlayerMessage(otherPlayer, "lb_banned|")
 
         # tell all other clients in the lobby to update the lobby
-        for lobbyPlayer in player.inLobby:
-            self._sendPlayerMessage(lobbyPlayer, "lb_updated|")
+        self.updateLobby(player.inLobby)
 
         return {"success":True}
 

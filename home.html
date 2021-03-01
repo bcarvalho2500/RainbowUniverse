@@ -189,17 +189,23 @@
         memberContainer.innerHTML = playerData[0];
 
         if(controlButtons){
-            var banButton = document.createElement("button");
-            banButton.className = "lobbyMemberButton";
-            banButton.onmousedown = function(){ banPlayer(playerData[1]); }
-            banButton.innerHTML = "B";
-            memberContainer.appendChild(banButton);
+            var buttonContainer = document.createElement("div");
+            buttonContainer.style.height = "100%";
+            buttonContainer.style.float = "right";
 
-            var kickButton = document.createElement("button");
+            var banButton = document.createElement("div");
+            banButton.className = "lobbyMemberButton";
+            banButton.onmousedown = function(){ banPlayerFromLobby(playerData[1]); }
+            banButton.innerHTML = "Ban";
+            buttonContainer.appendChild(banButton);
+
+            var kickButton = document.createElement("div");
             kickButton.className = "lobbyMemberButton";
-            kickButton.onmousedown = function(){ kickPlayer(playerData[1]); }
-            kickButton.innerHTML = "K";
-            memberContainer.appendChild(kickButton);
+            kickButton.onmousedown = function(){ kickPlayerFromLobby(playerData[1]); }
+            kickButton.innerHTML = "Kick";
+            buttonContainer.appendChild(kickButton);
+
+            memberContainer.appendChild(buttonContainer);
         }
 
         var membersContainer = document.getElementById("membersContainer");
@@ -296,10 +302,12 @@
 
             "lb_kicked":function(message){
                 console.log("You have been kicked from the lobby");
+                showPage("mainMenuPage");
             },
 
             "lb_banned":function(message){
                 console.log("You have been banned from the lobby");
+                showPage("mainMenuPage");
             },
 
             "lb_promoted":function(message){
@@ -309,18 +317,24 @@
                 console.log("Lobby ID =", lobbyId);
                 lobbyPlayers = ["*"+alias+":"+clientId];
                 showPage("lobbyPage");
-                addPlayerToLobby(lobbyPlayers[0], true);
+                addPlayerToLobby(lobbyPlayers[0], false);
             },
 
             "lb_updated":function(message){
-                console.log("The lobby is being updated");
-
                 document.getElementById("membersContainer").innerHTML = "";
-
                 lobbyPlayers = message.split(",");
-                var isLobbyLeader = lobbyPlayers[0] == "*"+alias+":"+clientId;
-                for(var i=lobbyPlayers.length-1; i>=0; i--){
-                    addPlayerToLobby(lobbyPlayers[i], isLobbyLeader);
+                var playersCount = lobbyPlayers.length;
+
+                var isLobbyLeader = lobbyPlayers[0] == alias+":"+clientId;
+                if(isLobbyLeader){
+                    addPlayerToLobby(lobbyPlayers[0], false);
+                    for(var i=1; i<playersCount; i++){
+                        addPlayerToLobby(lobbyPlayers[i], true);
+                    }
+                }else{
+                    for(var i=0; i<playersCount; i++){
+                        addPlayerToLobby(lobbyPlayers[i], false);
+                    }
                 }
             },
         })[type] || function(){})(message);

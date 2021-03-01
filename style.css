@@ -63,12 +63,6 @@ body {
 }
 
 .gradientTitle{
-    /*
-    background: -webkit-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
-    background: -o-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
-    background: -moz-linear-gradient(left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
-    background: linear-gradient(to left,color-stop(0,rgb(255,0,0)),color-stop(0.2,rgb(255,255,0)),color-stop(0.4,rgb(0,255,0)),color-stop(0.6,rgb(0,255,255)),color-stop(0.8,rgb(0,0,255)),color-stop(1,rgb(255,0,255)));
-    */
     background: -webkit-linear-gradient(right,red, yellow, green, cyan, blue, magenta);
     background: -o-linear-gradient(right,red, yellow, green, cyan, blue, magenta);
     background: -moz-linear-gradient(right,red, yellow, green, cyan, blue, magenta);
@@ -114,14 +108,15 @@ body {
 }
 
 .lobbyMemberButton {
-    height:70px;
-    width:70px;
-    float:right;
-    margin-left:5px;
+    height:50%;
+    font-size: 55%;
+    line-height: 100%;
+    padding: 0;
 }
 
 .lobbyMemberButton:hover {
     cursor: pointer;
+    color:#333333;
 }
 
 #lobbyInfo{
