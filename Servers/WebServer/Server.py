@@ -18,6 +18,8 @@ class Server:
 
     _routers = {}
 
+    landingPage = ""
+
     def addRouter(route, router):
         Server._routers[route] = router
 
@@ -37,6 +39,9 @@ class Server:
             self.end_headers()
 
             path = self.path.strip("/").strip("\\")
+            if len(path) == 0: path = Server.landingPage
+            if len(path) == 0: return bytes("Invalid path", "UTF-8")
+
             fileType = path[path.rfind("."):]
             docTypeLocation = os.path.join(Server.rootDirectory, Server.docTypeLocations.get(fileType, "Misc"))
             requestedDirectory = os.path.realpath(os.path.join(docTypeLocation, path))
