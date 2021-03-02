@@ -1,95 +1,90 @@
 import subprocess, requests, time, traceback
-import SocketServer, HTTPServer
-
-
-class NgrokServer:
-    def __init__(self, command):
-        self._startCommand = command
-        self._process = None
-
-    def start(self):
-        self._process = subprocess.Popen(self._startCommand, shell=True, stdout=subprocess.PIPE)
-
-    def stop(self):
-        if self._process is None: return {"success":False, "message":"Process is not started"}
-        self._process.terminate()
-
-    def getTunnels(self):
-        if self._process is None: return {"success":False, "message":"Process is not started"}
-
-        try: response = requests.get("http://127.0.0.1:4040/api/tunnels")
-        except: return {"success":False, "message":"Connection Failed"}
-        response = response.json()
-
-        return {"success":True, "tunnels":response["tunnels"]}
-
-    # def getOutput(self):
-    #     return process.stdout.readline()
+import NgrokServer, SocketServer, WebServer
 
 
 
+SOCKET_SERVER_NAME = "socketServer"
+HTTP_SERVER_NAME = "httpServer"
+
+SOCKET_SERVER_PORT = 0
+HTTP_SERVER_PORT = 0
+
+SOCKET_SERVER_ADDR = ""
+HTTP_SERVER_ADDR = ""
 
 
 
-# server = NgrokServer("ngrok start --config=ngrok.yml --all")
+ngrokServer = NgrokServer.Server("ngrok.yml")
+ngrokServer.start()
 
-# server.start()
-# time.sleep(2)
-# server.getTunnels()
-# time.sleep(4)
-# server.stop()
+attempts = 5
+while True:
+    response = ngrokServer.getTunnels()
+    if response["success"]: break
+    attempts -= 1
+    time.sleep(1)
+if attempts == 0:
+    print("Failed to run ngrok server")
+    exit(0)
 
 
+for tunnel in response["tunnels"]:
+    if tunnel["name"] == SOCKET_SERVER_NAME:
+        SOCKET_SERVER_ADDR = tunnel["public_url"]
+        SOCKET_SERVER_PORT = int(tunnel["config"]["addr"][tunnel["config"]["addr"].rfind(":")+1:])
+    elif tunnel["name"] == HTTP_SERVER_NAME:
+        HTTP_SERVER_ADDR = tunnel["public_url"]
+        HTTP_SERVER_PORT = int(tunnel["config"]["addr"][tunnel["config"]["addr"].rfind(":")+1:])
 
 
-server = SocketServer.Server()
-server.start()
+print("Website hosted at :", HTTP_SERVER_ADDR)
+
+
+socketServer = SocketServer.Server(SOCKET_SERVER_PORT)
+socketServer.start()
+
+WebServer.Server.addRouter("home.html", lambda route, content: content.replace("{{SOCKET_SERVER_ADDR}}", SOCKET_SERVER_ADDR.replace("https", "wss")))
+httpServer = WebServer.Server(HTTP_SERVER_PORT)
+httpServer.start()
 
 while True:
     try:
         userInput = input()
-
-        # stops the server
-        if userInput == "quit":
-            server.stop()
-            break
-
-        # restarts the server
-        elif userInput == "restart":
-            server.stop()
-            server.start()
-
-        # prints player information
-        elif userInput == "players":
-            server.listPlayers()
-
-        # prints lobby information
-        elif userInput == "lobbies":
-            server.listLobbies()
-
-        # # reloads the server if any code is changed
-        # elif userInput == "reload":
-        #     server.stop()
-        #     reload(Objects)
-        #     server = Objects.Server()
-        #     server.start()
-
-        else:
-            print("Unknown command \"%s\"" % userInput)
-
     except KeyboardInterrupt:
-        server.stop()
-        break
-
+        userInput = "quit"
     except Exception as e:
         print(" ----------- SERVER EXCEPTION ----------- ")
         print(traceback.format_exc())
         print(" ---------------------------------------- ")
+        continue
 
+    # stops the server
+    if userInput == "quit":
+        socketServer.stop()
+        httpServer.stop()
+        ngrokServer.stop()
+        break
 
+    # prints player information
+    elif userInput == "players":
+        socketServer.listPlayers()
 
+    # prints lobby information
+    elif userInput == "lobbies":
+        socketServer.listLobbies()
 
+    # # restarts the server
+    # elif userInput == "restart":
+    #     socketServer.stop()
+    #     socketServer.start()
 
+    # # reloads the server if any code is changed
+    # elif userInput == "reload":
+    #     server.stop()
+    #     reload(Objects)
+    #     server = Objects.Server()
+    #     server.start()
 
-
+    else:
+        print("Unknown command \"%s\"" % userInput)
 

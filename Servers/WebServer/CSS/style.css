@@ -2,7 +2,7 @@ body {
     margin:0;
     width:100%;
     height:100%;
-    background-image: url(Images/backdrop.png);
+    background-image: url(backdrop.png);
     background-repeat: no-repeat;
     background-size: 100%;
 }

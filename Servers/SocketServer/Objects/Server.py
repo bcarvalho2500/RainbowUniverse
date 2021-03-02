@@ -11,11 +11,9 @@ import SocketServer.socketServer
 LOBBY_MAX_SIZE = 5
 LOBBY_ID_LENGTH = 8
 
-SERVER_HOST = "127.0.0.1"
-SERVER_PORT = 9995
-
 class Server:
-    def __init__(self):
+    def __init__(self, port):
+        self._port = port
         self._server = None
         self._lobbies = {}
         self._games = {}
@@ -46,7 +44,7 @@ class Server:
 
     def start(self):
         if self._server is None:
-            self._server = SocketServer.socketServer.WebsocketServer(port=SERVER_PORT, host=SERVER_HOST)
+            self._server = SocketServer.socketServer.WebsocketServer(port=self._port, host="localhost")
 
             self._server.set_fn_new_client(lambda client, server: self._onConnect(client))
             self._server.set_fn_client_left(lambda client, server: self._onDisconnect(client))
@@ -59,7 +57,7 @@ class Server:
             self._server.shutdown()
             self._server.server_close()
 
-            self.__init__()
+            self.__init__(self._port)
 
     def _onMessage(self, client, message):
         player = self._getPlayerFromClient(client)
