@@ -1,5 +1,5 @@
 from threading import Thread
-import os, random
+import os, random, json
 
 from SocketServer.Objects.Game import Game
 from SocketServer.Objects.Lobby import Lobby
@@ -16,7 +16,7 @@ class Server:
         self._port = port
         self._server = None
         self._lobbies = {}
-        self._games = {}
+        self._games = []
 
         self._players = {}
 
@@ -72,7 +72,9 @@ class Server:
                 "lb_leave":  lambda m: self.leaveLobby(player),
                 "lb_kick":   lambda m: self.kickFromLobby(player, self._getPlayerFromClientId(m)),
                 "lb_ban":    lambda m: self.banFromLobby(player, self._getPlayerFromClientId(m)),
-            }).get(messageData[0], lambda m:m)(messageData[1])
+                "lb_start":  lambda m: self.startMatch(player.inLobby),
+                "gm_move":   lambda m: self.madeMove(player, m),
+            }).get(messageData[0], lambda m:{"success":False, "message":"Invalid message"})(messageData[1])
 
         if not response["success"]:
             self._sendPlayerMessage(player, "sv_error|%s" % response["message"])
@@ -98,7 +100,7 @@ class Server:
             
         # remove them from the lobby?
         if not player.inGame:
-            self.leaveLobby(player)
+            self.completeGame(player.inGame)
 
         # allow them to reconnect to a game?
 
@@ -204,6 +206,39 @@ class Server:
         lobbyPlayers = ",".join(["%s:%s"%(player.alias, player.getClientId()) for player in lobby.players])
         for lobbyPlayer in lobby:
             self._sendPlayerMessage(lobbyPlayer, "lb_updated|%s" % lobbyPlayers)
+
+    def startMatch(self, lobby):
+        if len(lobby.players) < 2:
+            return {"success":False, "message":"Can't start a game with only one player!"}
+
+        newGame = Game(lobby.players[:2])
+        for player in lobby.players[2:]:
+            newGame.addSpectator(player)
+
+        self._games.append(newGame)
+
+        for lobbyPlayer, index in zip(lobby.players, range(len(lobby.players))):
+            playerInfo = {
+                "role":"player" if index<2 else "spectator",
+                "board":newGame.getPlayerBoard(index if index < 2 else random.randint(0, 1)),
+                "myTurn":newGame.getCurrentTurn() == index
+            }
+
+            self._sendPlayerMessage(lobbyPlayer, "gm_started|%s" % json.dumps(playerInfo))
+
+        return {"success":True}
+
+    def madeMove(self, player, move):
+        pass
+
+    def completeGame(self, game):
+        # for player in game._players:
+
+        self._games.remove(game)
+
+            # self.leaveLobby(player)
+        
+
 
     # print info about players currently connected
     def listPlayers(self):

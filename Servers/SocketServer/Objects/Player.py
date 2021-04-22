@@ -4,6 +4,7 @@ class Player:
         self.alias   = "UNNAMED"
         self.inGame  = False
         self.inLobby = None
+        self.inGame  = None
 
         self.pos = {"x":0, "y":0}
         self.vel = {"x":0, "y":0}

@@ -6,16 +6,17 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
 
     <script>
-        var clientId = undefined;
-        var lobbyId = undefined;
-        var lobbyPlayers = [];
-        var alias = undefined;
+        let clientId = undefined;
+        let lobbyId = undefined;
+        let lobbyPlayers = [];
+        let alias = undefined;
     </script>
 </head>
 
 <body>
 <!-- Container for Overlays-->
     <div id="overlays">
+
         <!-- Overlay for Join Lobby-->
         <div class="overlay" id="joinLobbyOverlay" style="display: block;">
             <div><h2>Enter Lobby Code:</h2></div>
@@ -44,12 +45,10 @@
 
 <!-- MAIN MENU PAGE -->
     <div class="page" id="mainMenuPage">
-        <div id="titleBar">
+        <div id="titleBar" style='padding:4px'>
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
             <div style="flex:2; text-align:center"> <h1><span class = "gradientTitle">Rainbow Universe</span></h1> </div>
-            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias1"></button>
-                <div></div>
-            </div>
+            <div style='flex:1'><h3 id="userAlias1" style="text-align: right;"></h3></div>
         </div>
         <div>
             <br><br><br><br><br><br><br><br><br><br><!-- temp ;) -->
@@ -57,7 +56,7 @@
                 <div><button onmousedown="quickPlay()" style="background-color: aqua;">Quick Play</button></div>
                 <div><button onmousedown="createLobby()" style="background-color: orange;">Create Lobby</button></div>
                 <div><button onmousedown="showOverlay('joinLobbyOverlay')" style="background-color: rgb(80, 223, 80);">Join Lobby</button></div>
-                <div><button onmousedown="rankedLobby()" style="background-color: rgb(211, 112, 211);">Ranked</button></div>
+                <div><button onmousedown="showOverlay('joinLobbyOverlay')" style="background-color: rgb(211, 112, 211);">Spectate</button></div>
                 <div><button onmousedown="showPage('leaderBoardPage')" style="background-color: rgb(224, 49, 49);">Leader Boards</button></div>
             </div>
         </div>
@@ -68,12 +67,10 @@
 
 <!-- LOBBY PAGE -->
     <div class="page" id="lobbyPage">
-        <div id="titleBar">
+        <div id="titleBar" style='padding:4px'>
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
             <div style="flex:2; text-align:center"> <h1><span class = "gradientTitle">Rainbow Universe</span></h1> </div>
-            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias2"></button>
-                <div></div>
-            </div>
+            <div style='flex:1;'><h3 id="userAlias2" style="text-align: right;"></h3></div>
         </div>
         
         <div id="lobbyInfo">
@@ -83,7 +80,7 @@
                 <div id="membersContainer"></div>
                 <div style="display:flex;">
                     <button onmousedown="leaveLobby()" style="background-color: aqua;">Leave Lobby</button>
-                    <button style="background-color: orange;">Start Searching</button>
+                    <button onmousedown="startMatch()" style="background-color: orange;">Start Match</button>
                 </div>
             </div>
         </div>
@@ -94,12 +91,10 @@
 
 <!-- LEADERBOARD PAGE -->
     <div class="page" id="leaderBoardPage">
-        <div id="titleBar">
+        <div id="titleBar" style='padding:4px'>
             <div style="flex:1; text-align: left; font-size: 100%;"><h3>High Score:</h3></div>
             <div style="flex:2; text-align:center"> <h1><span class = "gradientTitle">Rainbow Universe</span></h1> </div>
-            <div id="UserInfo" style="flex:1; text-align: right;"><button id="userAlias3"></button>
-                <div></div>
-            </div>
+            <div style='flex:1;'><h3 id="userAlias3" style="text-align: right;"></h3></div>
         </div>
         <div style="text-align:center; margin: 10px">
             <div style="font-size:40pt; margin-top:50px; margin-bottom: 5px; border: 2px solid green; background-color: #87cefa75;"><p >TOP 25 TODAY</p></div>
@@ -112,6 +107,16 @@
         </div>
     </div>
 <!-- LEADERBOARD PAGE END -->
+
+    
+<!-- GAME PAGE -->
+    <div class="page" id="gamePage">
+        <div style="display:flex; justify-content:center; align-items:center; height:100%">
+            <div id="gameBoard" style="display:flex; flex-direction:column; width:80vh; height:80vh; border:1px solid black;">
+            </div>
+        </div>
+    </div>
+<!-- GAME PAGE -->
 
     <div class="page" id="winnerPage">
         <div id="titleBar">
@@ -133,7 +138,28 @@
 
 <script>
 
-    var onShowPage = {
+    (function generateBoard(){
+        const boardContainer = document.getElementById('gameBoard');
+        for(let i=0; i<8; i++){
+            const newRow = document.createElement('div');
+            newRow.style.display = 'flex';
+            newRow.style.flexDirection = 'row';
+            newRow.style.flex = '1';
+            for(let j=0; j<8; j++){
+                const newCell = document.createElement('div');
+                newCell.style.flex = '1';
+                newCell.style.backgroundColor = (i+j)%2 ? 'black' : 'white';
+                newRow.appendChild(newCell)
+            }
+            boardContainer.appendChild(newRow);
+        }
+    })();
+
+    function updateBoard(){
+
+    }
+
+    const onShowPage = {
         "mainMenuPage": function(page){
             document.getElementById("userAlias1").innerHTML = alias;
         },
@@ -148,14 +174,14 @@
         }
     };
 
-    var onHidePage = {
+    const onHidePage = {
 
     };
 
-    var showPage = function(page){
-        var pageElement = document.getElementById(page);
-        var activePages = pageElement.parentElement.getElementsByClassName("active")
-        for(var j=activePages.length-1; j>=0; j--){
+    const showPage = function(page){
+        const pageElement = document.getElementById(page);
+        const activePages = pageElement.parentElement.getElementsByClassName("active")
+        for(let j=activePages.length-1; j>=0; j--){
             (onHidePage[activePages[j].id] || function(){})(activePages[j]);
             activePages[j].classList.remove("active");
         }
@@ -165,16 +191,16 @@
     }
 
 
-    var showOverlay = function(overlayId){
+    const showOverlay = function(overlayId){
         document.getElementById("overlays").style.display = "flex";
         document.getElementById(overlayId).classList.add("active");
     }
 
-    var hideOverlay = function(){
-        var overlayContainer = document.getElementById("overlays");
+    const hideOverlay = function(){
+        const overlayContainer = document.getElementById("overlays");
         document.getElementById("overlays").style.display = "none";
-        var elements = overlayContainer.getElementsByClassName("active");
-        for(var i=elements.length-1; i>=0; i--){
+        const elements = overlayContainer.getElementsByClassName("active");
+        for(let i=elements.length-1; i>=0; i--){
             elements[i].classList.remove("active");
         }
     }
@@ -183,23 +209,23 @@
     function addPlayerToLobby(player, controlButtons){
         playerData = player.split(":")
 
-        var memberContainer = document.createElement("div");
+        const memberContainer = document.createElement("div");
         memberContainer.className = "lobbyMember";
         memberContainer.setAttribute("clientId", playerData[1]);
         memberContainer.innerHTML = playerData[0];
 
         if(controlButtons){
-            var buttonContainer = document.createElement("div");
+            const buttonContainer = document.createElement("div");
             buttonContainer.style.height = "100%";
             buttonContainer.style.float = "right";
 
-            var banButton = document.createElement("div");
+            const banButton = document.createElement("div");
             banButton.className = "lobbyMemberButton";
             banButton.onmousedown = function(){ banPlayerFromLobby(playerData[1]); }
             banButton.innerHTML = "Ban";
             buttonContainer.appendChild(banButton);
 
-            var kickButton = document.createElement("div");
+            const kickButton = document.createElement("div");
             kickButton.className = "lobbyMemberButton";
             kickButton.onmousedown = function(){ kickPlayerFromLobby(playerData[1]); }
             kickButton.innerHTML = "Kick";
@@ -208,41 +234,45 @@
             memberContainer.appendChild(buttonContainer);
         }
 
-        var membersContainer = document.getElementById("membersContainer");
+        const membersContainer = document.getElementById("membersContainer");
         membersContainer.appendChild(memberContainer);
     }
 
 
 
     const host = "{{SOCKET_SERVER_ADDR}}";
-    var socket = new WebSocket(host);
+    const socket = new WebSocket(host);
 
-    var setAlias = function(alias){
+    const setAlias = function(alias){
         socket.send("cl_alias|" + alias);
     }
 
-    var createLobby = function(){
+    const createLobby = function(){
         socket.send("lb_create|");
     }
 
-    var joinLobby = function(localLobbyId){
+    const joinLobby = function(localLobbyId){
         lobbyId = localLobbyId;
         socket.send("lb_join|" + localLobbyId);
     }
 
-    var leaveLobby = function(lobbyId){
+    const leaveLobby = function(){
         socket.send("lb_leave|");
         lobbyPlayers = [];
         lobbyId = undefined;
         showPage("mainMenuPage");
     }
 
-    var kickPlayerFromLobby = function(clientId){
+    const kickPlayerFromLobby = function(clientId){
         socket.send("lb_kick|" + clientId);
     }
 
-    var banPlayerFromLobby = function(clientId){
+    const banPlayerFromLobby = function(clientId){
         socket.send("lb_ban|" + clientId);
+    }
+
+    const startMatch = function(){
+        socket.send('lb_start|');
     }
 
     socket.onopen = function(){
@@ -260,9 +290,9 @@
     }
 
     socket.onmessage = function(e){
-        var messageData = e.data.split("|")
-        var type        = messageData[0];
-        var message     = messageData[1];
+        const messageData = e.data.split("|")
+        const type        = messageData[0];
+        const message     = messageData[1];
         
         (({
             "sv_error":function(message){
@@ -270,7 +300,7 @@
             },
 
             "cl_init":function(message){
-                var clientInfo = message.split(":")
+                const clientInfo = message.split(":")
                 clientId = clientInfo[1];
                 if(alias === undefined){
                     alias = clientInfo[0];
@@ -323,20 +353,34 @@
             "lb_updated":function(message){
                 document.getElementById("membersContainer").innerHTML = "";
                 lobbyPlayers = message.split(",");
-                var playersCount = lobbyPlayers.length;
+                const playersCount = lobbyPlayers.length;
 
-                var isLobbyLeader = lobbyPlayers[0] == alias+":"+clientId;
+                const isLobbyLeader = lobbyPlayers[0] == alias+":"+clientId;
                 if(isLobbyLeader){
                     addPlayerToLobby(lobbyPlayers[0], false);
-                    for(var i=1; i<playersCount; i++){
+                    for(let i=1; i<playersCount; i++){
                         addPlayerToLobby(lobbyPlayers[i], true);
                     }
                 }else{
-                    for(var i=0; i<playersCount; i++){
+                    for(let i=0; i<playersCount; i++){
                         addPlayerToLobby(lobbyPlayers[i], false);
                     }
                 }
             },
+
+            "gm_started":function(message){
+                console.log("joining game as: ", message);
+                showPage("gamePage");
+            },
+
+            "gm_updated":function(message){
+                const data = JSON.parse(message);
+            }
+
+            "gm_continue":function(message){
+                const gameData = JSON.parse(message);
+                showPage("gamePage");
+            }
         })[type] || function(){})(message);
     }
 

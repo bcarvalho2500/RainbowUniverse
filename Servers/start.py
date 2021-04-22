@@ -3,7 +3,7 @@ import SocketServer, WebServer
 from IPManager import IPManager
 
 
-ipManager = IPManager(live=True)
+ipManager = IPManager(live=False)
 ipManager.start()
 print("Website hosted at :", ipManager.getHttpAddr())
 print(ipManager.getSocketAddr())
