@@ -6,7 +6,7 @@ class Game:
         self._spectators = []
         self._currentTurn = random.randint(0, 1)
         self._winner = None
-        self._board = [[" bbb  rrr"[(i+1)*((i+j)%2)] for j in range(8)] for i in range(8)]
+        self._board = [[" bbb  rrr"[(i+1)*(((i+j)%2) == 0)] for j in range(8)] for i in range(8)]
         if self._currentTurn == 1:
             self._board = self._board[::-1]
 

@@ -150,7 +150,7 @@
                 const newCell = document.createElement('div');
                 newCell.style.position = 'relative';
                 newCell.style.flex = '1';
-                newCell.style.backgroundColor = !((i+j)%2) ? 'black' : 'white';
+                newCell.style.backgroundColor = (i+j)%2 ? 'black' : 'white';
                 newRow.appendChild(newCell)
             }
             boardContainer.appendChild(newRow);
