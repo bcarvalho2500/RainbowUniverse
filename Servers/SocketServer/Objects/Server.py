@@ -220,7 +220,7 @@ class Server:
         for lobbyPlayer, index in zip(lobby.players, range(len(lobby.players))):
             playerInfo = {
                 "role":"player" if index<2 else "spectator",
-                "board":newGame.getPlayerBoard(index if index < 2 else random.randint(0, 1)),
+                "board":newGame.getPlayerBoard(index == 1),
                 "myTurn":newGame.getCurrentTurn() == index
             }
 
@@ -229,10 +229,22 @@ class Server:
         return {"success":True}
 
     def madeMove(self, player, move):
-        pass
+        if player.inGame == None: return {"success":False, "message":"You are not playing a game"}
+
+        response = player.inGame.makeMove(player, move)
+        if not response["success"]: return response
+
+        for player in player.inGame._players:
+            playerInfo = {
+                "role":"player" if index<2 else "spectator",
+                "board":newGame.getPlayerBoard(index == 1),
+                "myTurn":newGame.getCurrentTurn() == index
+            }
+            self._sendPlayerMessage(player, "gm_updated|%s" % json.dumps(playerInfo))
 
     def completeGame(self, game):
-        # for player in game._players:
+        for player, i in zip(game._players, range(len(game._players))):
+            self._sendPlayerMessage(player, "gm_ended|%d" % (i == game._winner))
 
         self._games.remove(game)
 
