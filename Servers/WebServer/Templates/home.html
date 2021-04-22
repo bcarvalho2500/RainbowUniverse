@@ -155,8 +155,24 @@
         }
     })();
 
-    function updateBoard(){
+    function updateBoard(board){
 
+        for(let i=0; i<8; i++){
+
+            for(let j=0; j<8; j++){
+                if (board[i][j] == 'r') {
+                    const newPiece = document.createElement('span');
+                    newPiece.className="redPiece";
+                    gameBoard.children[i].children[j].appendChild(newPiece);
+                }
+                if (board[i][j] == 'b') {
+                    const newPiece = document.createElement('span');
+                    newPiece.className="bluePiece";
+                    gameBoard.children[i].children[j].appendChild(newPiece);
+                }
+            }
+
+        }
     }
 
     const onShowPage = {
@@ -370,11 +386,14 @@
 
             "gm_started":function(message){
                 console.log("joining game as: ", message);
+                const data = JSON.parse(message);
+                updateBoard(data.board);
                 showPage("gamePage");
             },
 
             "gm_updated":function(message){
                 const data = JSON.parse(message);
+                updateBoard(data.board);
             }
 
             "gm_continue":function(message){

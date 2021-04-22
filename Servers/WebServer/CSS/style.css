@@ -131,3 +131,32 @@ body {
     margin:5px;
     height:50px;
 }
+
+.circleBase {
+    border-radius: 50%;
+}
+  
+.redPiece {
+    border-radius: 100%;
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    background: radial-gradient(circle, lightcoral, red, darkred);
+    background: -webkit-radial-gradient(circle, lightcoral, red, darkred);
+    background: -moz-radial-gradient(circle, lightcoral, red, darkred)
+
+}
+
+.bluePiece {
+    border-radius: 100%;
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    background: radial-gradient(circle, lightblue, blue, darkblue);
+    background: -webkit-radial-gradient(circle, lightblue, blue, darkblue);
+    background: -moz-radial-gradient(circle, lightblue, blue, darkblue)
+}
