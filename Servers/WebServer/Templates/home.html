@@ -138,6 +138,8 @@
 
 <script>
     let selectedPiece = undefined;
+    let leftMove = undefined;
+    let rightMove = undefined;
 
     (function generateBoard(){
         const boardContainer = document.getElementById('gameBoard');
@@ -156,6 +158,21 @@
             boardContainer.appendChild(newRow);
         }
     })();
+    
+    function selectPiece(event, board, i, j){
+        if(selectedPiece != undefined){
+            selectedPiece.style.border = 'none';
+            if(selectedPiece === event.target){
+                selectedPiece = undefined;
+                leftMove = undefined;
+                rightMove = undefined;
+                return;
+            }
+        }
+        event.target.style.border = '2px solid yellow';
+        selectedPiece = event.target;
+        availableMoves(board, i, j);
+    }
 
     function updateBoard(board){
 
@@ -165,19 +182,36 @@
                 if (board[i][j] == 'r') {
                     const newPiece = document.createElement('span');
                     newPiece.addEventListener('click', function(event){
-                        event.target.style.border = '2px solid yellow';
-                        selectedPiece = event.target;
-                    })
+                        selectPiece(event, board, i, j);
+                    });
                     newPiece.className="redPiece";
                     gameBoard.children[i].children[j].appendChild(newPiece);
                 }
                 if (board[i][j] == 'b') {
                     const newPiece = document.createElement('span');
+                    newPiece.addEventListener('click', function(event){
+                        selectPiece(event, board);
+                    });
                     newPiece.className="bluePiece";
                     gameBoard.children[i].children[j].appendChild(newPiece);
                 }
             }
 
+        }
+    }
+
+    function availableMoves(board, i, j){
+        
+        const newCell = document.createElement('span');
+        newCell.className('availableCells');
+        // Checks if there is an open spot to the top left
+        if(board[i-1][j-1] === ''){
+            gameBoard.children[i-1].children[j-1].appendChild(newCell);
+        }
+
+        if(board[i-1][j+1] === ''){
+            gameBoard.children[i-1].children[j+1].appendChild(newCell);
+            //rightMove = 
         }
     }
 

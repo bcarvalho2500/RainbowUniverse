@@ -160,3 +160,12 @@ body {
     background: -webkit-radial-gradient(circle, lightblue, blue, darkblue);
     background: -moz-radial-gradient(circle, lightblue, blue, darkblue)
 }
+
+
+.availableCells{
+    background-color: yellow;
+}
+
+.unavailableCells{
+    background-color: black;
+}
