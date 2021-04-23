@@ -21,9 +21,16 @@ class Game:
         pieceIndex = "br".indexOf(self._board[move["from"][0]][move["from"][1]])
         if pieceIndex != playerIndex: return {"success":False, "message":"That is not your piece"}
 
-        
+        if abs(move["from"][0]-move["to"][0]) != 1 or abs(move["from"][1]-move["to"][1]) != 1:
+            if abs(move["from"][0]-move["to"][0]) != 2 or abs(move["from"][1]-move["to"][1]) != 2:
+                return {"success":False, "message":"Invalid move"}
 
-        # update the board
+            # if 
+
+        if self._board[move["to"][0]][move["to"][1]]
+
+        self._board[move["to"][0]][move["to"][1]] = self._board[move["from"][0]][move["from"][1]];
+        self._board[move["from"][0]][move["from"][1]] = ' ';
 
         return {"success":True}
 
@@ -35,8 +42,10 @@ class Game:
         return self._currentTurn
 
     def getPlayerBoard(self, playerIndex):
-        # return self._board if not playerIndex else self._board[::-1]
-        return self._board
+        return self._board if not playerIndex else [r[::-1] for r in self._board[::-1]]
+
+    def getPlayerSide(self, player):
+        return self._players.indexOf(player)
 
     def addSpectator(self, spectator):
         spectator.inGame = self

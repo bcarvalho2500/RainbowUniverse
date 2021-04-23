@@ -238,7 +238,8 @@ class Server:
             playerInfo = {
                 "role":"player" if index<2 else "spectator",
                 "board":newGame.getPlayerBoard(index == 1),
-                "myTurn":newGame.getCurrentTurn() == index
+                "myTurn":newGame.getCurrentTurn() == index,
+                "side":player.inGame.getPlayerSide()
             }
             self._sendPlayerMessage(player, "gm_updated|%s" % json.dumps(playerInfo))
 
