@@ -73,7 +73,7 @@ class Server:
                 "lb_kick":   lambda m: self.kickFromLobby(player, self._getPlayerFromClientId(m)),
                 "lb_ban":    lambda m: self.banFromLobby(player, self._getPlayerFromClientId(m)),
                 "lb_start":  lambda m: self.startMatch(player.inLobby),
-                "gm_move":   lambda m: self.madeMove(player, m),
+                "gm_move":   lambda m: self.madeMove(player, json.loads(m)),
             }).get(messageData[0], lambda m:{"success":False, "message":"Invalid message"})(messageData[1])
 
         if not response["success"]:
@@ -99,7 +99,9 @@ class Server:
         if player is None: return {"success":False, "message":"Player was not connected"}
             
         # remove them from the lobby?
-        if not player.inGame:
+        if player.inGame:
+            player.inGame.setLoser(player)
+            self.leaveLobby(player)
             self.completeGame(player.inGame)
 
         # allow them to reconnect to a game?
@@ -211,46 +213,47 @@ class Server:
         if len(lobby.players) < 2:
             return {"success":False, "message":"Can't start a game with only one player!"}
 
-        newGame = Game(lobby.players[:2])
-        for player in lobby.players[2:]:
-            newGame.addSpectator(player)
-
+        newGame = Game(lobby.players)
         self._games.append(newGame)
 
-        for lobbyPlayer, index in zip(lobby.players, range(len(lobby.players))):
+        for player in newGame._players:
             playerInfo = {
-                "role":"player" if index<2 else "spectator",
-                "board":newGame.getPlayerBoard(index == 1),
-                "myTurn":newGame.getCurrentTurn() == index
+                "board":newGame.getPlayerBoard(player),
+                "color":player.inGame.getPlayerColor(player),
+                "turn":newGame.getCurrentTurn()
             }
 
-            self._sendPlayerMessage(lobbyPlayer, "gm_started|%s" % json.dumps(playerInfo))
+            self._sendPlayerMessage(player, "gm_started|%s" % json.dumps(playerInfo))
 
         return {"success":True}
 
     def madeMove(self, player, move):
-        if player.inGame == None: return {"success":False, "message":"You are not playing a game"}
+        currentGame = player.inGame
+        if currentGame == None: return {"success":False, "message":"You are not playing a game"}
 
-        response = player.inGame.makeMove(player, move)
+        response = currentGame.makeMove(player, move)
         if not response["success"]: return response
 
-        for player in player.inGame._players:
+        if currentGame.getWinner() != None:
+            return self.completeGame(currentGame)
+
+        for player in currentGame._players:
             playerInfo = {
-                "role":"player" if index<2 else "spectator",
-                "board":newGame.getPlayerBoard(index == 1),
-                "myTurn":newGame.getCurrentTurn() == index,
-                "side":player.inGame.getPlayerSide()
+                "board":currentGame.getPlayerBoard(player),
+                "turn":currentGame.getCurrentTurn(),
+                "color":currentGame.getPlayerColor(player),
             }
             self._sendPlayerMessage(player, "gm_updated|%s" % json.dumps(playerInfo))
 
-    def completeGame(self, game):
-        for player, i in zip(game._players, range(len(game._players))):
-            self._sendPlayerMessage(player, "gm_ended|%d" % (i == game._winner))
+        return {"success":True}
 
+    def completeGame(self, game):
+        for player in game._players:
+            player.inGame = None
+            self._sendPlayerMessage(player, "gm_ended|%s" % game.getWinner())
         self._games.remove(game)
 
-            # self.leaveLobby(player)
-        
+        return {"success":True}
 
 
     # print info about players currently connected
@@ -260,9 +263,6 @@ class Server:
             print(" --------- %s --------- " % (clientId))
             print(" In Game: %s" % str(player.inGame))
             print(" Alias:   %s" % player.alias)
-            if player.inGame:
-                print(" Position: x=%d, y=%d" % (player.pos["x"], player.pos["y"]))
-                print(" Velocity: x=%d, y=%d" % (player.vel["x"], player.vel["y"]))
             print("")
 
     # print info about lobbies that are created

@@ -5,6 +5,7 @@ body {
     background-image: url(backdrop.png);
     background-repeat: no-repeat;
     background-size: 100%;
+    overflow:hidden;
 }
 
 #overlays {
@@ -25,6 +26,7 @@ body {
     display: none;
     align-items: center;
     justify-content: center;
+    z-index: 1000;
 }
 
 .page {
@@ -135,14 +137,18 @@ body {
 .circleBase {
     border-radius: 50%;
 }
-  
-.redPiece {
+
+.piece {
+    position: relative;
     border-radius: 100%;
     position: absolute;
     left: 5px;
     right: 5px;
     top: 5px;
     bottom: 5px;
+}
+
+.redPiece {
     background: radial-gradient(circle, lightcoral, red, darkred);
     background: -webkit-radial-gradient(circle, lightcoral, red, darkred);
     background: -moz-radial-gradient(circle, lightcoral, red, darkred)
@@ -150,22 +156,33 @@ body {
 }
 
 .bluePiece {
-    border-radius: 100%;
-    position: absolute;
-    left: 5px;
-    right: 5px;
-    top: 5px;
-    bottom: 5px;
     background: radial-gradient(circle, lightblue, blue, darkblue);
     background: -webkit-radial-gradient(circle, lightblue, blue, darkblue);
     background: -moz-radial-gradient(circle, lightblue, blue, darkblue)
 }
 
+.king {
 
-.availableCells{
-    background-color: yellow;
 }
 
-.unavailableCells{
-    background-color: black;
+.crown{
+    position: absolute;
+    left:8px;
+    right:8px;
+    top:8px;
+    bottom:8px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cpolygon points='2,19 9,76 90,76 97,19 72,50 50,23 49,23 27,50' style='fill:%23000'/%3E%3C/svg%3E");
+    background-size: cover;
+}
+
+.cell{
+    position: relative;
+    flex:1;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.availableCell{
+    background-color: yellow;
 }

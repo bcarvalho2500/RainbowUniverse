@@ -14,25 +14,6 @@
 </head>
 
 <body>
-<!-- Container for Overlays-->
-    <div id="overlays">
-
-        <!-- Overlay for Join Lobby-->
-        <div class="overlay" id="joinLobbyOverlay" style="display: block;">
-            <div><h2>Enter Lobby Code:</h2></div>
-            <div id = "joinLobby">
-                <textarea name="lobbyCode" id="lobbyCode" maxlength="8" rows="1" cols="12"></textarea>
-            </div>
-            <br>
-            <!--Buttons for joining lobby or canceling-->
-            <div id = "joinLobbyOptions" style="float: right;">
-                <button onmousedown="joinLobby(document.getElementById('lobbyCode').value); hideOverlay();"  style="background-color: rgb(80, 223, 80);">Join Lobby</button>
-                <button onmousedown="hideOverlay(); document.getElementById('lobbyCode').value=''" style="background-color: rgb(224, 49, 49);">Cancel</button>
-            </div>
-        </div>
-    </div>
-<!-- OVERLAYS END -->
-
 
 
  <!-- CONNECTIONS PAGE -->
@@ -80,7 +61,7 @@
                 <div id="membersContainer"></div>
                 <div style="display:flex;">
                     <button onmousedown="leaveLobby()" style="background-color: aqua;">Leave Lobby</button>
-                    <button onmousedown="startMatch()" style="background-color: orange;">Start Match</button>
+                    <button onmousedown="startMatch()" style="background-color: orange;">Start Game</button>
                 </div>
             </div>
         </div>
@@ -112,8 +93,8 @@
 <!-- GAME PAGE -->
     <div class="page" id="gamePage">
         <div style="display:flex; justify-content:center; align-items:center; height:100%">
-            <div id="gameBoard" style="display:flex; flex-direction:column; width:80vh; height:80vh; border:1px solid black;">
-            </div>
+            <div id="turnIndicator" style='position:absolute; text-align:center; bottom:0; width:100%; font-size:8vh'></div>
+            <div id="gameBoard" style="display:flex; flex-direction:column; width:80vh; height:80vh; border:1px solid black;"></div>
         </div>
     </div>
 <!-- GAME PAGE -->
@@ -133,127 +114,166 @@
             <div><button onmousedown="showPage('mainMenuPage')" style="background-color: rgb(112, 112, 202);">Back to Menu</button></div>
         </div>
     </div>
+
+
+
+<!-- Container for Overlays-->
+    <div id="overlays">
+
+        <!-- Overlay for Join Lobby-->
+        <div class="overlay" id="joinLobbyOverlay">
+            <div><h2>Enter Lobby Code:</h2></div>
+            <div id = "joinLobby">
+                <textarea name="lobbyCode" id="lobbyCode" maxlength="8" rows="1" cols="12"></textarea>
+            </div>
+            <br>
+            <!--Buttons for joining lobby or canceling-->
+            <div id = "joinLobbyOptions" style="float: right;">
+                <button onmousedown="joinLobby(document.getElementById('lobbyCode').value); hideOverlay();"  style="background-color: rgb(80, 223, 80);">Join Lobby</button>
+                <button onmousedown="hideOverlay(); document.getElementById('lobbyCode').value=''" style="background-color: rgb(224, 49, 49);">Cancel</button>
+            </div>
+        </div>
+
+        <div class="overlay" id="endGameOverlay">
+            <div style='border:1px solid black; background-color: white; border-radius: 10px; padding:10px 40px'>
+                <div id='winnerOverlayText' style='text-align: center'></div>
+                <button onmousedown="hideOverlay(); showPage('lobbyPage')">Back To Lobby</button>
+            </div>
+        </div>
+    </div>
+<!-- OVERLAYS END -->
+
 </body>
 
 
 <script>
+    const gameBoard = document.getElementById('gameBoard');
     let selectedPiece = undefined;
-    let leftMove = undefined;
-    let rightMove = undefined;
+    let availableCells = [];
+
+    function getCellColor(x, y){
+        return (x+y)%2 ? 'black' : 'white';
+    }
 
     (function generateBoard(){
-        const boardContainer = document.getElementById('gameBoard');
-        for(let i=0; i<8; i++){
+        for(let y=0; y<8; y++){
             const newRow = document.createElement('div');
             newRow.style.display = 'flex';
             newRow.style.flexDirection = 'row';
             newRow.style.flex = '1';
-            for(let j=0; j<8; j++){
+            for(let x=0; x<8; x++){
                 const newCell = document.createElement('div');
-                newCell.style.position = 'relative';
-                newCell.style.flex = '1';
-                newCell.style.boxSizing = 'border-box';
-                newCell.style.backgroundColor = (i+j)%2 ? 'black' : 'white';
-                newRow.appendChild(newCell)
+                newCell.className = 'cell';
+                newCell.style.backgroundColor = getCellColor(x, y);
+                newCell.setAttribute('x', x);
+                newCell.setAttribute('y', y);
+                newRow.appendChild(newCell);
             }
-            boardContainer.appendChild(newRow);
+            gameBoard.appendChild(newRow);
         }
     })();
     
-    function selectPiece(event, board, i, j){
-        const boardContainer = document.getElementById('gameBoard');
-        
+    function selectPiece(target, board){
+        for(const cell of availableCells){
+            cell.onclick = function(){ return false; }
+        }
+        availableCells = [];
+
+        const newX = parseInt(target.parentNode.getAttribute('x'));
+        const newY = parseInt(target.parentNode.getAttribute('y'));
+
         if(selectedPiece != undefined){
             selectedPiece.style.border = 'none';
-            if(selectedPiece === event.target){
+
+            for(const move of availableMoves(board, parseInt(selectedPiece.parentNode.getAttribute('x')), parseInt(selectedPiece.parentNode.getAttribute('y')))){
+                const cell = gameBoard.children[move[0]].children[move[1]];
+                cell.style.backgroundColor = getCellColor(move[0], move[1]);
+            }
+
+            if(selectedPiece === target){
                 selectedPiece = undefined;
-                leftMove.style.backgroundColor = 'black';
-                leftMove = undefined;
-                rightMove.style.backgroundColor = 'black';
-                rightMove = undefined;
                 return;
             }
         }
-        event.target.style.border = '2px solid yellow';
-        selectedPiece = event.target;
-        const moves = availableMoves(board, i, j);
 
-        for(const move of moves){
-            const cell = boardContainer.children[move[0]].children[move[0]];
-            cell.style.border = '2px solid yellow';
-            cell.classList.add('selectedCell');
+        // add yellow border to current piece
+        target.style.border = '4px solid yellow';
+        selectedPiece = target;
+
+        // highlight the squares with available moves
+        for(const move of availableMoves(board, newX, newY)){
+            const cell = gameBoard.children[move[0]].children[move[1]];
+            cell.style.backgroundColor = 'yellow';
+            cell.onclick = function(event){
+                const from = {x:parseInt(selectedPiece.parentNode.getAttribute('x')), y:parseInt(selectedPiece.parentNode.getAttribute('y'))};
+                const to = {x:parseInt(event.target.getAttribute('x')), y:parseInt(event.target.getAttribute('y'))};
+                
+                makeMove({from:from, to:to});
+
+                selectPiece(selectedPiece, board);
+            }
+            availableCells.push(cell);
         }
     }
 
-    function updateBoard(board){
+    function updateBoard(board, playerColor, turn){
+        const classes = {
+            r:'redPiece',
+            b:'bluePiece',
+            R:'redPiece king',
+            B:'bluePiece king'
+        };
 
-        for(let i=0; i<8; i++){
+        document.getElementById('turnIndicator').innerHTML = `${{r:"Red", b:"Blue"}[turn]}'s Turn`;
 
-            for(let j=0; j<8; j++){
-                if (board[i][j] == 'r') {
-                    const newPiece = document.createElement('span');
-                    newPiece.addEventListener('click', function(event){
-                        selectPiece(event, board, i, j);
-                    });
-                    newPiece.className="redPiece";
-                    gameBoard.children[i].children[j].appendChild(newPiece);
-                }
-                if (board[i][j] == 'b') {
-                    const newPiece = document.createElement('span');
-                    newPiece.addEventListener('click', function(event){
-                        selectPiece(event, board, i, j);
-                    });
-                    newPiece.className="bluePiece";
-                    gameBoard.children[i].children[j].appendChild(newPiece);
+
+        const pieces = document.getElementsByClassName('piece');
+        while(pieces.length){ pieces[0].parentNode.removeChild(pieces[0]); }
+
+        for(let y=0; y<8; y++){
+            for(let x=0; x<8; x++){
+                const pieceClass = classes[board[x][y]];
+                if(pieceClass !== undefined){
+                    const newPiece = document.createElement('div');
+
+                    if(pieceClass.includes('king')){
+                        const crown = document.createElement('div');
+                        crown.className = 'crown';
+                        newPiece.appendChild(crown);
+                    }
+
+                    if(board[x][y].toLowerCase() === playerColor && board[x][y].toLowerCase() === turn){
+                        newPiece.addEventListener('click', function(event){
+                            let target = event.target;
+                            while(!target.classList.contains('piece')){ target = target.parentNode; }
+                            selectPiece(target, board);
+                        });
+                    }
+                    newPiece.className = 'piece ' + pieceClass;
+                    gameBoard.children[x].children[y].appendChild(newPiece);
                 }
             }
         }
     }
 
-    function availableMoves(board, i, j){
+    function availableMoves(board, x, y){
+        const isKing = board[y][x] === board[y][x].toUpperCase();
+        const oppositeColor = 'br'['rb'.indexOf(board[y][x].toLowerCase())];
         const moves = [];
-        const opositeColor = 'gr'['rg'.indexOf(board[i][j])];
 
-        if(i>0 && j>0 && board[i-1][j-1] === ' '){
-            moves.push([i-1, j-1]);
-        }else if(i>1 && j>1 && board[i-1][j-1] === opositeColor && board[i-2][j-2] === ' '){
-            moves.push([i-2, j-2]);
-        }
+        if(y>0 && x<7 && board[y-1][x+1] === ' '){ moves.push([y-1, x+1]); }
+        if(y>0 && x>0 && board[y-1][x-1] === ' '){ moves.push([y-1, x-1]); }
+        if(y>1 && x<6 && board[y-2][x+2] === ' ' && board[y-1][x+1] === oppositeColor){ moves.push([y-2, x+2]); }
+        if(y>1 && x>1 && board[y-2][x-2] === ' ' && board[y-1][x-1] === oppositeColor){ moves.push([y-2, x-2]); }
 
-        if(i>0 && j<7 && board[i-1][j+1] === ' '){
-            moves.push([i-1, j+1]);
-        }else if(i>1 && j<6 && board[i-1][j+1] === opositeColor && board[i-2][j+2] === ' '){
-            moves.push([i-2, j+2]);
-        }
-
-        if(i<7 && j>0 && board[i+1][j-1] === ' '){
-            moves.push([i+1, j-1]);
-        }else if(i<6 && j>1 && board[i+1][j-1] === opositeColor && board[i+2][j-2] === ' '){
-            moves.push([i+2, j-2]);
-        }
-
-        if(i<7 && j<7 && board[i+1][j+1] === ' '){
-            moves.push([i+1, j+1]);
-        }else if(i<6 && j<6 && board[i+1][j+1] === opositeColor && board[i+2][j+2] === ' '){
-            moves.push([i+2, j+2]);
+        if(isKing){
+            if(y<7 && x<7 && board[y+1][x+1] === ' '){ moves.push([y+1, x+1]); }
+            if(y<7 && x>0 && board[y+1][x-1] === ' '){ moves.push([y+1, x-1]); }
+            if(y<6 && x<6 && board[y+2][x+2] === ' ' && board[y+1][x+1] === oppositeColor){ moves.push([y+2, x+2]); }
+            if(y<6 && x>1 && board[y+2][x-2] === ' ' && board[y+1][x-1] === oppositeColor){ moves.push([y+2, x-2]); }
         }
 
         return moves;
-        
-        const newCell = document.createElement('span');
-        newCell.className('availableCells');
-        // Checks if there is an open spot to the top left
-        if(board[i-1][j-1] === ' '){
-            //gameBoard.children[i-1].children[j-1].appendChild(newCell);
-            leftMove = gameBoard.children[i-1].children[j-1];
-            leftMove.style.backgroundColor = 'yellow';
-        }
-
-        if(board[i-1][j+1] === ' '){
-            //gameBoard.children[i-1].children[j+1].appendChild(newCell);
-            rightMove = gameBoard.children[i-1].children[j+1];
-            rightMove.style.backgroundColor = 'yellow';
-        }
     }
 
     const onShowPage = {
@@ -289,17 +309,13 @@
 
 
     const showOverlay = function(overlayId){
-        document.getElementById("overlays").style.display = "flex";
-        document.getElementById(overlayId).classList.add("active");
+        document.getElementById('overlays').style.display = 'flex';
+        document.getElementById(overlayId).style.display = 'block';
     }
 
     const hideOverlay = function(){
-        const overlayContainer = document.getElementById("overlays");
-        document.getElementById("overlays").style.display = "none";
-        const elements = overlayContainer.getElementsByClassName("active");
-        for(let i=elements.length-1; i>=0; i--){
-            elements[i].classList.remove("active");
-        }
+        document.getElementById('overlays').style.display = 'none';
+        for(const overlay of document.getElementsByClassName('overlay')){ overlay.style.display = 'none'; }
     }
 
 
@@ -370,6 +386,10 @@
 
     const startMatch = function(){
         socket.send('lb_start|');
+    }
+
+    const makeMove = function(move){
+        socket.send('gm_move|' + JSON.stringify(move));
     }
 
     socket.onopen = function(){
@@ -467,18 +487,23 @@
 
             "gm_started":function(message){
                 const data = JSON.parse(message);
-                updateBoard(data.board);
+                updateBoard(data.board, data.color, data.turn);
                 showPage("gamePage");
             },
 
             "gm_updated":function(message){
                 const data = JSON.parse(message);
-                updateBoard(data.board);
+                updateBoard(data.board, data.color, data.turn);
             },
 
             "gm_continue":function(message){
                 const gameData = JSON.parse(message);
                 showPage("gamePage");
+            },
+
+            "gm_ended":function(message){
+                document.getElementById('winnerOverlayText').innerHTML = `Winner: ${{r:"Red", b:"Blue"}[message]}!`;
+                showOverlay('endGameOverlay');
             }
         })[type] || function(){})(message);
     }
