@@ -21,13 +21,22 @@ class Game:
         pieceIndex = "br".indexOf(self._board[move["from"][0]][move["from"][1]])
         if pieceIndex != playerIndex: return {"success":False, "message":"That is not your piece"}
 
+        if move["from"][0] < 0 or move["from"][0] >= 8: return {"success":False, "message":"Invalid move"}
+        if move["from"][1] < 0 or move["from"][1] >= 8: return {"success":False, "message":"Invalid move"}
+        if move["to"][0]   < 0 or move["to"][0]   >= 8: return {"success":False, "message":"Invalid move"}
+        if move["to"][1]   < 0 or move["to"][1]   >= 8: return {"success":False, "message":"Invalid move"}
+
         if abs(move["from"][0]-move["to"][0]) != 1 or abs(move["from"][1]-move["to"][1]) != 1:
             if abs(move["from"][0]-move["to"][0]) != 2 or abs(move["from"][1]-move["to"][1]) != 2:
                 return {"success":False, "message":"Invalid move"}
 
-            # if 
+            xDir = -1 if move["from"][0]>move["to"][0] else 1;
+            yDir = -1 if move["from"][1]>move["to"][1] else 1;
 
-        if self._board[move["to"][0]][move["to"][1]]
+            if self._board[move["from"][0]+xDir][move["from"][1]+yDir] != (not pieceIndex):
+                return {"success":False, "message":"Cant capture your own piece"}
+            else:
+                self._board[move["from"][0]+xDir][move["from"][1]+yDir] = ' '
 
         self._board[move["to"][0]][move["to"][1]] = self._board[move["from"][0]][move["from"][1]];
         self._board[move["from"][0]][move["from"][1]] = ' ';
@@ -37,6 +46,10 @@ class Game:
     def setLoser(self, player):
         loser = self._players.indexOf(player)
         if loser > 1: return {"success":False, "message":"Player was not player"}
+
+        self._winner = not loser
+
+        return {"success":True}
 
     def getCurrentTurn(self):
         return self._currentTurn
