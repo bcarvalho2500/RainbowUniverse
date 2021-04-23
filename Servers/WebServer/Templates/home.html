@@ -164,9 +164,9 @@
             selectedPiece.style.border = 'none';
             if(selectedPiece === event.target){
                 selectedPiece = undefined;
-                leftMove.style.backgroundColor = 'none';
+                leftMove.style.backgroundColor = 'black';
                 leftMove = undefined;
-                rightMove.style.backgroundColor = 'none';
+                rightMove.style.backgroundColor = 'black';
                 rightMove = undefined;
                 return;
             }
@@ -207,14 +207,16 @@
         const newCell = document.createElement('span');
         newCell.className('availableCells');
         // Checks if there is an open spot to the top left
-        if(board[i-1][j-1] === ''){
+        if(board[i-1][j-1] === ' '){
             //gameBoard.children[i-1].children[j-1].appendChild(newCell);
-            leftMove = gameBoard.children[i-1].children[j-1]
+            leftMove = gameBoard.children[i-1].children[j-1];
+            leftMove.style.backgroundColor = 'yellow';
         }
 
-        if(board[i-1][j+1] === ''){
+        if(board[i-1][j+1] === ' '){
             //gameBoard.children[i-1].children[j+1].appendChild(newCell);
-            //rightMove = 
+            rightMove = gameBoard.children[i-1].children[j+1];
+            rightMove.style.backgroundColor = 'yellow';
         }
     }
 
