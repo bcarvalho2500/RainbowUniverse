@@ -1,1 +1,1 @@
-web: cd Servers && python start.py
+web: cd Servers && python3 start.py
