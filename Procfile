@@ -1,0 +1,1 @@
+web: cd Servers && python start.py
