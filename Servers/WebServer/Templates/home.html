@@ -152,6 +152,7 @@
                 const newCell = document.createElement('div');
                 newCell.style.position = 'relative';
                 newCell.style.flex = '1';
+                newCell.style.boxSizing = 'border-box';
                 newCell.style.backgroundColor = (i+j)%2 ? 'black' : 'white';
                 newRow.appendChild(newCell)
             }
@@ -160,6 +161,8 @@
     })();
     
     function selectPiece(event, board, i, j){
+        const boardContainer = document.getElementById('gameBoard');
+        
         if(selectedPiece != undefined){
             selectedPiece.style.border = 'none';
             if(selectedPiece === event.target){
@@ -173,7 +176,13 @@
         }
         event.target.style.border = '2px solid yellow';
         selectedPiece = event.target;
-        availableMoves(board, i, j);
+        const moves = availableMoves(board, i, j);
+
+        for(const move of moves){
+            const cell = boardContainer.children[move[0]].children[move[0]];
+            cell.style.border = '2px solid yellow';
+            cell.classList.add('selectedCell');
+        }
     }
 
     function updateBoard(board){
@@ -192,17 +201,44 @@
                 if (board[i][j] == 'b') {
                     const newPiece = document.createElement('span');
                     newPiece.addEventListener('click', function(event){
-                        selectPiece(event, board);
+                        selectPiece(event, board, i, j);
                     });
                     newPiece.className="bluePiece";
                     gameBoard.children[i].children[j].appendChild(newPiece);
                 }
             }
-
         }
     }
 
     function availableMoves(board, i, j){
+        const moves = [];
+        const opositeColor = 'gr'['rg'.indexOf(board[i][j])];
+
+        if(i>0 && j>0 && board[i-1][j-1] === ' '){
+            moves.push([i-1, j-1]);
+        }else if(i>1 && j>1 && board[i-1][j-1] === opositeColor && board[i-2][j-2] === ' '){
+            moves.push([i-2, j-2]);
+        }
+
+        if(i>0 && j<7 && board[i-1][j+1] === ' '){
+            moves.push([i-1, j+1]);
+        }else if(i>1 && j<6 && board[i-1][j+1] === opositeColor && board[i-2][j+2] === ' '){
+            moves.push([i-2, j+2]);
+        }
+
+        if(i<7 && j>0 && board[i+1][j-1] === ' '){
+            moves.push([i+1, j-1]);
+        }else if(i<6 && j>1 && board[i+1][j-1] === opositeColor && board[i+2][j-2] === ' '){
+            moves.push([i+2, j-2]);
+        }
+
+        if(i<7 && j<7 && board[i+1][j+1] === ' '){
+            moves.push([i+1, j+1]);
+        }else if(i<6 && j<6 && board[i+1][j+1] === opositeColor && board[i+2][j+2] === ' '){
+            moves.push([i+2, j+2]);
+        }
+
+        return moves;
         
         const newCell = document.createElement('span');
         newCell.className('availableCells');
