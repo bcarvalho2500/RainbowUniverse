@@ -502,6 +502,8 @@
             },
 
             "gm_ended":function(message){
+                console.log(message)
+
                 document.getElementById('winnerOverlayText').innerHTML = `Winner: ${{r:"Red", b:"Blue"}[message]}!`;
                 showOverlay('endGameOverlay');
             }

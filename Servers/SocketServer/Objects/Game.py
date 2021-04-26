@@ -67,7 +67,7 @@ class Game:
                 return {"success":False, "message":"Cant capture your own piece"}
             else:
                 self._pieceCount[betweenColor] -= 1
-                if self._pieceCount[betweenColor] == 0: self.setLoser(player)
+                if self._pieceCount[betweenColor] == 0: self.setWinner(player)
                 self._board[move["from"]["y"]+yDir][move["from"]["x"]+xDir] = ' '
 
         self._board[move["to"]["y"]][move["to"]["x"]] = newPiece;
