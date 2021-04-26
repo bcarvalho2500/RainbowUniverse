@@ -33,6 +33,7 @@ class Server:
 
     # returns the player object associated with a specific client
     def _getPlayerFromClient(self, client):
+        if client is None: return None
         return self._getPlayerFromClientId(client["id"])
 
     # generates a unique id for a new lobby
